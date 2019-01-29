@@ -3,25 +3,20 @@ int analogPin_out = A4;
 int fast_slow = 12; 
 int time_const = 0 ;
 int val = 0 ;
-
 int last_val = 0 ;
-int now = 0; 
 int alpha = 0 ; 
 int delta = 0 ;
 
 void setup()
     {
-//    Serial.begin(9600);    
     pinMode(fast_slow, INPUT_PULLUP);
     }
 
 void loop()
 {
-  
-val = analogRead(analogPin_in);     // read the input pin
-
-// analogRead gets values in 0-1024 range but analog write is in 1-255 
-if ( val > last_val)
+  val = analogRead(analogPin_in);     // read the input pin
+  // analogRead gets values in 0-1024 range but analog write is in 1-255 range  , so for 1:1 input / output we use 1/4 ratio 
+  if ( val > last_val)
     {
       alpha = millis() ;
       analogWrite(analogPin_out, val/4); 
@@ -29,11 +24,10 @@ if ( val > last_val)
       time_const = digitalRead(fast_slow)*1000+200 ;
     }
  
-delta = millis() - alpha ;
-if ( val < last_val && delta > time_const )
+  delta = millis() - alpha ;
+  if ( val < last_val && delta > time_const )
     {
       analogWrite(analogPin_out, val/4); 
       last_val = val;
     }
-//Serial.println(delta);
 }
