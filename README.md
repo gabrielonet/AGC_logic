@@ -9,8 +9,8 @@ satisfactory but it introduced a delay in attack time too ,so on high level burs
 at the burst begining until AGC kicked in)
 So I decided to remove capacitors and use an arduino nano as time const logic.
 Basicaly , I used an analog pin as input and another analog pin as output , so if signal is bigger than previous one then instantly
-produce AGC decay, and set a variable as current millis() .
-If signal is less than previous and time delta is greater that decay preset time( I use another digital pin to select fast or slow),
-then AGC is decaying to current signal level
+produce AGC kick in (knee time), and set a variable as current millis() .
+If signal is less than previous and time delta is greater that preset time( I use another digital pin to select fast or slow),
+then AGC is decaying to current signal level.
 
 
