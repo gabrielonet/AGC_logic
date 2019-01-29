@@ -27,6 +27,7 @@ void loop()
   delta = millis() - alpha ;
   if ( val < last_val && delta > time_const )
     {
+      val = analogRead(analogPin_in);  
       analogWrite(analogPin_out, val/4); 
       last_val = val;
     }
