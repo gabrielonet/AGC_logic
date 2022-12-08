@@ -1,15 +1,11 @@
-#include <Adafruit_MCP4725.h> // MCP4725 library from adafruit
-
-// analogRead gets values in 0-1024 range but analog write is in 1-255 range  , so for 1:1 input / output we use 1/4 ratio 
-int analogPin_in = A3;    
-int analogPin_out = A4; 
-int time_const = 1000 ; // Here you should alter Hang time, or use another digital input pin to alter it as Fast/ Slow in main loop
+#include <Adafruit_MCP4725.h>   // MCP4725 library from adafruit
+Adafruit_MCP4725 MCP4725;       // Will use this instead of analogwrite() coz PWM freq is awfull, also MCP is 12 bit DAC, 
+int analogPin_in = A3;          // Here comes the output from AD8307 Logarithmic detector
+int time_const = 1000 ;         // Here you should alter Hang time, or use another digital input pin to alter it as Fast/ Slow in main loop
 int val = 0 ;
 int last_val = 0 ;
 int alpha = 0 ; 
 int delta = 0 ;
-Adafruit_MCP4725 MCP4725; 
-
 
 void setup()
     {
@@ -19,11 +15,10 @@ void setup()
 
 void loop()
 {
-  val = analogRead(analogPin_in);     // read the input pin
+  val = analogRead(analogPin_in);     // read RSSI value from AD8307
   
-  if ( val > last_val)
+  if ( val > last_val) // fast AGC knee time
     {
-      analogWrite(analogPin_out, val); 
       last_val = val;
       Serial.println(val);
       alpha = millis() ;
@@ -32,13 +27,13 @@ void loop()
   
   delta = millis() - alpha ;
   
-  if ( val < last_val && delta > time_const )
+  if ( val < last_val && delta > time_const ) // Time const AGC fall down time.
     {
       val = analogRead(analogPin_in);  
-      analogWrite(analogPin_out, val); 
       last_val = val;
-          Serial.println(val);
-          MCP4725.setVoltage(val, false);
+      Serial.println(val);
+      MCP4725.setVoltage(val, false);
     }
-
 }
+
+// Somewhere in loop should be the correct ratio between Input detector and voltage applied to AD603 I.F. in order to respect a 1 dB ATT for 1dB signal increase
