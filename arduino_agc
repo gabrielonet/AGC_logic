@@ -1,34 +1,44 @@
+#include <Adafruit_MCP4725.h> // MCP4725 library from adafruit
+
+// analogRead gets values in 0-1024 range but analog write is in 1-255 range  , so for 1:1 input / output we use 1/4 ratio 
 int analogPin_in = A3;    
 int analogPin_out = A4; 
-int fast_slow = 12; 
-int time_const = 0 ;
+int time_const = 1000 ; // Here you should alter Hang time, or use another digital input pin to alter it as Fast/ Slow in main loop
 int val = 0 ;
 int last_val = 0 ;
 int alpha = 0 ; 
 int delta = 0 ;
+Adafruit_MCP4725 MCP4725; 
+
 
 void setup()
     {
-    pinMode(fast_slow, INPUT_PULLUP);
+      Serial.begin(9600);
+      MCP4725.begin(0x60);
     }
 
 void loop()
 {
   val = analogRead(analogPin_in);     // read the input pin
-  // analogRead gets values in 0-1024 range but analog write is in 1-255 range  , so for 1:1 input / output we use 1/4 ratio 
+  
   if ( val > last_val)
     {
-      alpha = millis() ;
-      analogWrite(analogPin_out, val/4); 
+      analogWrite(analogPin_out, val); 
       last_val = val;
-      time_const = digitalRead(fast_slow)*1000+200 ;
+      Serial.println(val);
+      alpha = millis() ;
+      MCP4725.setVoltage(val, false);
     }
- 
+  
   delta = millis() - alpha ;
+  
   if ( val < last_val && delta > time_const )
     {
       val = analogRead(analogPin_in);  
-      analogWrite(analogPin_out, val/4); 
+      analogWrite(analogPin_out, val); 
       last_val = val;
+          Serial.println(val);
+          MCP4725.setVoltage(val, false);
     }
+
 }
