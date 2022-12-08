@@ -35,5 +35,6 @@ void loop()
       MCP4725.setVoltage(val, false);
     }
 }
-
+// TODO :
 // Somewhere in loop should be the correct ratio between Input detector and voltage applied to AD603 I.F. in order to respect a 1 dB ATT for 1dB signal increase
+// Also, analog input value is 10 bit as 1024, while MCP DAC is 12 bit as 4096
